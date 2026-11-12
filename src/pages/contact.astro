@@ -1,0 +1,24 @@
+---
+import Base from '../layouts/Base.astro';
+import site from '../data/site.json';
+const { contact } = site;
+---
+<Base
+  title={`Contact — ${site.person.name}`}
+  description={`${contact.heading} ${contact.email} · ${contact.locationLines[0]}`}
+  active="contact"
+>
+  <div class="contact">
+    <div class="intro"><span class="kicker">04 — Contact</span></div>
+    <h1 class="contact-title"><a href={`mailto:${contact.email}`}>{contact.heading}</a></h1>
+    <div class="contact-details">
+      <div><a href={`mailto:${contact.email}`}>{contact.email}</a></div>
+      <div>
+        <a href={contact.instagram.url} target="_blank" rel="noopener">{contact.instagram.label} ↗</a><br />
+        <a href={contact.linkedin.url} target="_blank" rel="noopener">{contact.linkedin.label} ↗</a><br />
+        <a href={`tel:${contact.mobile.tel}`}>Mobile: {contact.mobile.label}</a>
+      </div>
+      <div>{contact.locationLines[0]}<br />{contact.locationLines[1]}</div>
+    </div>
+  </div>
+</Base>

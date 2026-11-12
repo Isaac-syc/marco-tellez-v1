@@ -1,0 +1,25 @@
+---
+import Base from '../layouts/Base.astro';
+import Poster from '../components/Poster.astro';
+import site from '../data/site.json';
+
+const film = site.films.find((f) => f.slug === site.home.featuredFilmSlug)!;
+---
+<Base
+  title={`${site.person.role.split(' / ')[0]} — ${site.person.name}`}
+  description={site.about.paragraphs[0]}
+  active="home"
+  ogImage={`https://i.ytimg.com/vi/${film.youtubeId}/maxresdefault.jpg`}
+>
+  <h1 class="sr-only">{site.person.name} — {site.person.role}</h1>
+  <div class="intro">
+    <span class="kicker">{site.person.role}</span>
+    <span class="kicker">{site.person.homeKickerRight}</span>
+  </div>
+  <a class="hero" href={`film-${film.slug}.html`}>
+    <div class="frame" style={`--ar:${film.aspectRatio};aspect-ratio:${film.aspectRatio}`}>
+      <Poster youtubeId={film.youtubeId} aspectRatio={film.aspectRatio} eager />
+    </div>
+    <span class="hero-label">{site.home.featuredLabel}</span>
+  </a>
+</Base>

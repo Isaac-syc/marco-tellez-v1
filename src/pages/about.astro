@@ -1,0 +1,21 @@
+---
+import Base from '../layouts/Base.astro';
+import site from '../data/site.json';
+const { about } = site;
+---
+<Base title={`About — ${site.person.name}`} description={about.paragraphs[0]} active="about">
+  <div class="intro"><span class="kicker">03 — About</span></div>
+  <h1 class="about-lead">{about.heading}</h1>
+  <div class="about-bottom">
+    <div class="smallcopy">
+      {about.paragraphs.map((p) => <p set:html={p} />)}
+    </div>
+    <div class="smallcopy">
+      <strong>{about.experience.heading}</strong><br />
+      {about.experience.lines.map((l) => <Fragment>{l}<br /></Fragment>)}
+      <br />
+      <strong>{about.education.heading}</strong><br />
+      {about.education.lines.map((l, i) => <Fragment>{i > 0 && <br />}{l}</Fragment>)}
+    </div>
+  </div>
+</Base>

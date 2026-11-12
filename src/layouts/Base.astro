@@ -1,0 +1,58 @@
+---
+import '@fontsource/playfair-display/latin-400.css';
+import '@fontsource/playfair-display/latin-ext-400.css';
+import '@fontsource/playfair-display/latin-400-italic.css';
+import '@fontsource/playfair-display/latin-ext-400-italic.css';
+import '@fontsource/libre-baskerville/latin-400.css';
+import '@fontsource/libre-baskerville/latin-ext-400.css';
+import '@fontsource/libre-baskerville/latin-400-italic.css';
+import '@fontsource/libre-baskerville/latin-ext-400-italic.css';
+import '@fontsource/dm-mono/latin-400.css';
+import '@fontsource/dm-mono/latin-ext-400.css';
+import '../styles/style.css';
+import site from '../data/site.json';
+
+interface Props {
+  title: string;
+  description: string;
+  active?: 'home' | 'films' | 'stills' | 'about' | 'contact';
+  ogImage?: string;
+}
+const { title, description, active, ogImage } = Astro.props;
+const links = [
+  ['home', 'index.html', 'Home'],
+  ['films', 'films.html', 'Films'],
+  ['stills', 'stills.html', 'Stills'],
+  ['about', 'about.html', 'About'],
+  ['contact', 'contact.html', 'Contact'],
+] as const;
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={site.person.name} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    {ogImage && <meta property="og:image" content={ogImage} />}
+    <meta name="twitter:card" content={ogImage ? 'summary_large_image' : 'summary'} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  </head>
+  <body>
+    <nav class="nav" aria-label="Main">
+      <a class="brand" href="index.html">{site.person.name.toUpperCase()}</a>
+      <div class="links">
+        {links.map(([key, href, label]) => (
+          <a class={active === key ? 'active' : ''} href={href} aria-current={active === key ? 'page' : undefined}>{label}</a>
+        ))}
+      </div>
+    </nav>
+    <main class="page">
+      <slot />
+    </main>
+  </body>
+</html>

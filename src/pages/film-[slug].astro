@@ -1,0 +1,63 @@
+---
+import Base from '../layouts/Base.astro';
+import Poster from '../components/Poster.astro';
+import site from '../data/site.json';
+
+export function getStaticPaths() {
+  return site.films.map((film) => ({ params: { slug: film.slug }, props: { film } }));
+}
+const { film } = Astro.props;
+const long = ['el-testamento-belmonte', 'nocturno-de-chopin', 'a-skull-for-kira'].includes(film.slug);
+---
+<Base
+  title={`${film.title} — ${site.person.name}`}
+  description={film.synopsis}
+  active="films"
+  ogImage={`https://i.ytimg.com/vi/${film.youtubeId}/maxresdefault.jpg`}
+>
+  <div class="project">
+    <div>
+      <div class="kicker">{film.year} · {film.runtime}</div>
+      <h1 class:list={['project-title', { 'project-title--long': long }]}>{film.title}</h1>
+      <p class="project-desc">{film.synopsis}</p>
+      <div class="meta">{film.credit} — {site.person.name}<br />{film.techLine}</div>
+      <a class="watch" href={film.youtubeUrl} target="_blank" rel="noopener">Watch film ↗</a>
+    </div>
+    {film.embeddable ? (
+      <div class="video video--poster" data-video={film.youtubeId} data-title={film.title}>
+        <div class="frame" style={`aspect-ratio:${film.aspectRatio}`}>
+          <Poster youtubeId={film.youtubeId} aspectRatio={film.aspectRatio} eager />
+          <button class="play" type="button">Play film</button>
+        </div>
+      </div>
+    ) : (
+      <div class="video video--poster">
+        <div class="frame" style={`aspect-ratio:${film.aspectRatio}`}>
+          <Poster youtubeId={film.youtubeId} aspectRatio={film.aspectRatio} eager />
+          <a class="play" href={film.youtubeUrl} target="_blank" rel="noopener">Watch on YouTube ↗</a>
+        </div>
+      </div>
+    )}
+  </div>
+</Base>
+{film.embeddable && (
+  <script is:inline>
+    document.querySelectorAll('.video[data-video]').forEach(function (box) {
+      var btn = box.querySelector('.play');
+      btn.addEventListener('click', function () {
+        var f = document.createElement('iframe');
+        f.src = 'https://www.youtube-nocookie.com/embed/' + box.dataset.video + '?autoplay=1&rel=0';
+        f.title = box.dataset.title;
+        f.allow = 'autoplay; encrypted-media; picture-in-picture; fullscreen';
+        f.allowFullscreen = true;
+        f.referrerPolicy = 'strict-origin-when-cross-origin';
+        var fr = box.querySelector('.frame');
+        fr.style.aspectRatio = '16 / 9';
+        fr.appendChild(f);
+        f.focus();
+        box.querySelector('.poster').hidden = true;
+        btn.hidden = true;
+      });
+    });
+  </script>
+)}

@@ -1,0 +1,59 @@
+---
+import { Picture } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import site from '../data/site.json';
+import manifest from '../data/stills.json';
+
+const files = import.meta.glob<{ default: ImageMetadata }>('../assets/stills/**/*.jpg', { eager: true });
+const bySlug = new Map(manifest.map((m) => [m.slug, m]));
+
+const sections = site.stills.sections.map((sec) => ({
+  ...sec,
+  items: (site.stills.order as Record<string, string[]>)[sec.key].map((slug) => {
+    const m = bySlug.get(slug)!;
+    const img = files[`../assets/stills/${m.file}`].default;
+    return { slug, img, alt: (site.stills.alt as Record<string, string>)[slug], title: m.title };
+  }),
+}));
+const sizeFor = (i: number) => {
+  const k = i % 8;
+  const frac = k === 0 ? '0.5833' : k === 1 ? '0.4167' : '0.3333';
+  return `(max-width: 700px) calc(100vw - 32px), calc((100vw - 52px) * ${frac})`;
+};
+---
+<Base
+  title={`Stills — ${site.person.name}`}
+  description={`Photography — ${site.stills.sections.map((s) => s.label).join(' · ')}`}
+  active="stills"
+>
+  <h1 class="sr-only">Stills</h1>
+  <div class="intro">
+    <span class="kicker">02 — Stills</span>
+    <span class="kicker">Photography</span>
+  </div>
+  {sections.map((sec, si) => (
+    <>
+      {si > 0 && <div class="section-gap"></div>}
+      <div class="kicker">{sec.label}</div>
+      <div class="gallery">
+        {sec.items.map((it, i) => (
+          <div class:list={['image', `image--${it.slug}`]}>
+            <Picture
+              src={it.img}
+              alt={it.alt}
+              formats={['avif', 'webp']}
+              fallbackFormat="webp"
+              widths={[480, 800, 1200, 1600, 2400]}
+              sizes={sizeFor(i)}
+              width={it.img.width}
+              height={it.img.height}
+              loading={si === 0 && i === 0 ? 'eager' : 'lazy'}
+              decoding={si === 0 && i === 0 ? 'auto' : 'async'}
+              fetchpriority={si === 0 && i === 0 ? 'high' : undefined}
+            />
+          </div>
+        ))}
+      </div>
+    </>
+  ))}
+</Base>

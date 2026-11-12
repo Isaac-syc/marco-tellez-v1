@@ -1,0 +1,27 @@
+---
+import Base from '../layouts/Base.astro';
+import site from '../data/site.json';
+---
+<Base
+  title={`Films — ${site.person.name}`}
+  description={site.films.map((f) => f.title).join(' · ')}
+  active="films"
+>
+  <h1 class="sr-only">Films</h1>
+  <div class="intro">
+    <span class="kicker">01 — Short Films</span>
+    <span class="kicker">Selected work</span>
+  </div>
+  <div class="work-list">
+    {site.films.map((f) => (
+      <a class="work" href={`film-${f.slug}.html`}>
+        <span class="num">{f.number}</span>
+        <div>
+          <div class="title">{f.title}</div>
+          <div class="role">{f.listRole}</div>
+        </div>
+        <span class="year">{f.year}</span>
+      </a>
+    ))}
+  </div>
+</Base>
