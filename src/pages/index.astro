@@ -16,7 +16,7 @@ const film = site.films.find((f) => f.slug === site.home.featuredFilmSlug)!;
     <span class="kicker">{site.person.role}</span>
     <span class="kicker">{site.person.homeKickerRight}</span>
   </div>
-  <a class="hero" href={`film-${film.slug}.html`}>
+  <a class="hero" href={`film-${film.slug}.html`} aria-label={`${film.title} — view film`}>
     <div class="frame" style={`--ar:${film.aspectRatio};aspect-ratio:${film.aspectRatio}`}>
       <Poster youtubeId={film.youtubeId} aspectRatio={film.aspectRatio} eager />
     </div>
